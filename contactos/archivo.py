@@ -78,6 +78,23 @@ def eliminar(numero):
         return f.tell()
 
 
+# busqueda sin indice, hay que leer registro por registro hasta dar con el id
+# devuelve tambien cuantos registros se leyeron para poder comparar
+def buscar_secuencial(id_buscado):
+    leidos = 0
+    with open(ruta_datos, "rb") as f:
+        for numero in range(total_registros()):
+            crudo = f.read(TAMAÑO)
+            leidos += 1
+            try:
+                contacto = desde_bytes(crudo[:-1])
+            except (UnicodeDecodeError, ValueError):
+                continue
+            if contacto and contacto["id"] == id_buscado:
+                return numero, leidos
+    return None, leidos
+
+
 # recorre todo el archivo, se usa para exportar y para reconstruir el indice
 def recorrer():
     total = total_registros()
