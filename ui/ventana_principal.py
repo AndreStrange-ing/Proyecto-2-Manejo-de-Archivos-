@@ -32,6 +32,7 @@ class VentanaPrincipal:
         self.barra = BarraMenu(root, {"salir": root.destroy, "contactos": self.abrir_contactos,
                                       "json": self.exportar_json, "pdf": self.reporte_pdf,
                                       "integridad": self.verificar_integridad,
+                                      "respaldo": self.crear_respaldo,
                                       "settings": self.abrir_settings})
         self.barra.pack(side="top", fill="x")
 
@@ -63,6 +64,22 @@ class VentanaPrincipal:
             messagebox.showwarning("Integridad", mensaje, parent=self.root)
         elif not al_iniciar:
             messagebox.showinfo("Integridad", mensaje, parent=self.root)
+
+    def crear_respaldo(self):
+        try:
+            destino, original, comprimido = herramientas.crear_respaldo()
+        except OSError as e:
+            messagebox.showerror("Respaldo", f"No se pudo crear el respaldo ({e}).", parent=self.root)
+            return
+        if destino is None:
+            messagebox.showinfo("Respaldo", "Todavía no hay archivos que respaldar.", parent=self.root)
+            return
+
+        ahorro = 100 - comprimido * 100 / original
+        messagebox.showinfo("Respaldo", f"Respaldo creado en:\n{destino}\n\n"
+                            f"Tamaño original: {original} bytes\n"
+                            f"Tamaño comprimido: {comprimido} bytes\n"
+                            f"Reducción: {ahorro:.1f} %", parent=self.root)
 
     def exportar_json(self):
         try:

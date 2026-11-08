@@ -1,9 +1,13 @@
 import hashlib
 import os
+import zipfile
+from datetime import datetime
 
 from contactos.archivo import carpeta, ruta_datos
+from contactos.indice import ruta_indice
 
 ruta_hash = os.path.join(carpeta, "contactos.sha256")
+carpeta_respaldos = os.path.join(carpeta, "respaldos")
 
 
 # se lee por bloques para no cargar todo el archivo en memoria
@@ -44,3 +48,24 @@ def verificar():
         return "ok", f"El archivo está intacto.\n\nSHA-256: {actual}"
     return "alterado", ("El archivo fue modificado fuera de la aplicación.\n\n"
                         f"Huella guardada: {guardada}\nHuella actual:   {actual}")
+
+
+# guarda los contactos, el indice y la huella en un zip con la fecha en el nombre
+def crear_respaldo():
+    incluidos = [ruta for ruta in (ruta_datos, ruta_indice, ruta_hash) if os.path.exists(ruta)]
+    if not incluidos:
+        return None, 0, 0
+
+    os.makedirs(carpeta_respaldos, exist_ok=True)
+    nombre = datetime.now().strftime("respaldo_%Y%m%d_%H%M%S")
+    destino = os.path.join(carpeta_respaldos, nombre + ".zip")
+    copia = 2  # dos respaldos en el mismo segundo no se deben pisar
+    while os.path.exists(destino):
+        destino = os.path.join(carpeta_respaldos, f"{nombre}_{copia}.zip")
+        copia += 1
+    with zipfile.ZipFile(destino, "w", zipfile.ZIP_DEFLATED) as zip_:
+        for ruta in incluidos:
+            zip_.write(ruta, os.path.basename(ruta))
+
+    original = sum(os.path.getsize(ruta) for ruta in incluidos)
+    return destino, original, os.path.getsize(destino)
