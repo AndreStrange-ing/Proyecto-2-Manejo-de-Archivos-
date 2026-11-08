@@ -3,13 +3,18 @@ import os
 import tkinter as tk
 from tkinter import font as tkfont, messagebox
 
-from contactos import archivo, exportar
+from contactos import archivo, exportar, herramientas
 from ui.menu import BarraMenu
 from ui.ventana_contactos import VentanaContactos
 from ui.ventana_settings import VentanaSettings
 
 FONDOS = {"claro": "#f5f5f5", "oscuro": "#2b2b2b"}
 TAMAÑO_FOTO = 100
+ESTADOS = {"ok": "Integridad: archivo intacto",
+           "alterado": "Integridad: el archivo fue modificado fuera de la aplicación",
+           "sin_huella": "Integridad: huella creada por primera vez",
+           "sin_archivo": "Integridad: todavía no hay contactos.dat",
+           "error": "Integridad: no se pudo leer contactos.dat"}
 
 
 class VentanaPrincipal:
@@ -26,6 +31,7 @@ class VentanaPrincipal:
 
         self.barra = BarraMenu(root, {"salir": root.destroy, "contactos": self.abrir_contactos,
                                       "json": self.exportar_json, "pdf": self.reporte_pdf,
+                                      "integridad": self.verificar_integridad,
                                       "settings": self.abrir_settings})
         self.barra.pack(side="top", fill="x")
 
@@ -37,13 +43,26 @@ class VentanaPrincipal:
         self.lbl_saludo.grid(row=0, column=1, sticky="w")
         self.lbl_resumen = tk.Label(self.contenido, font=self.fuente, justify="left")
         self.lbl_resumen.grid(row=1, column=1, sticky="nw")
+        self.lbl_integridad = tk.Label(self.contenido, font=self.fuente)
+        self.lbl_integridad.grid(row=2, column=1, sticky="nw", pady=(8, 0))
 
         self.aplicar(config)
+        # el aviso de integridad sale cuando la ventana ya esta dibujada
+        root.after(150, lambda: self.verificar_integridad(al_iniciar=True))
 
     def abrir_contactos(self):
         ventana = VentanaContactos(self.root)
         self.root.wait_window(ventana)
         self.resumir()
+        self.lbl_integridad.config(text=ESTADOS[herramientas.verificar()[0]])
+
+    def verificar_integridad(self, al_iniciar=False):
+        estado, mensaje = herramientas.verificar()
+        self.lbl_integridad.config(text=ESTADOS[estado])
+        if estado == "alterado":
+            messagebox.showwarning("Integridad", mensaje, parent=self.root)
+        elif not al_iniciar:
+            messagebox.showinfo("Integridad", mensaje, parent=self.root)
 
     def exportar_json(self):
         try:
@@ -96,7 +115,7 @@ class VentanaPrincipal:
         self.fuente_titulo.configure(size=config["tamaño_fuente"] + 4)
 
         self.contenido.config(bg=fondo)
-        for lbl in (self.lbl_foto, self.lbl_saludo, self.lbl_resumen):
+        for lbl in (self.lbl_foto, self.lbl_saludo, self.lbl_resumen, self.lbl_integridad):
             lbl.config(bg=fondo, fg=letra)
         self.lbl_saludo.config(text=f"Bienvenido, {config['nombre_usuario']}")
         self.barra.pintar(config["color_barra_menu"], letra, self.fuente)

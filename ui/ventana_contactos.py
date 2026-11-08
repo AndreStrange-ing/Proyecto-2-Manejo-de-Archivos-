@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 
-from contactos import archivo, indice
+from contactos import archivo, herramientas, indice
 from contactos.registro import CAMPOS, validar
 
 ETIQUETAS = {"id": "ID", "nombre": "Nombre", "telefono": "Teléfono",
@@ -69,6 +69,11 @@ class VentanaContactos(tk.Toplevel):
         if error:
             messagebox.showerror("Contactos", error, parent=self)
 
+    # tras cada cambio se recalcula la huella, asi solo quedan marcados los
+    # cambios hechos por fuera de la aplicacion
+    def actualizar_huella(self):
+        self.intentar(herramientas.guardar_hash)
+
     def limpiar(self):
         for variable in self.campos.values():
             variable.set("")
@@ -125,6 +130,7 @@ class VentanaContactos(tk.Toplevel):
         numero, fin = resultado
         self.indice[contacto["id"]] = numero
         self.guardar_indice()
+        self.actualizar_huella()
         self.refrescar()
         self.avisar(f"Agregado en el registro {numero}, bytes {archivo.posicion(numero)} a {fin}.")
 
@@ -162,6 +168,7 @@ class VentanaContactos(tk.Toplevel):
         fin, ok = self.intentar(lambda: archivo.escribir(numero, contacto))
         if not ok:
             return
+        self.actualizar_huella()
         self.refrescar()
         self.avisar(f"Registro {numero} sobrescrito en los bytes {archivo.posicion(numero)} a {fin}, "
                     "el resto del archivo no se tocó.")
@@ -188,6 +195,7 @@ class VentanaContactos(tk.Toplevel):
             return
         del self.indice[id_]
         self.guardar_indice()
+        self.actualizar_huella()
         self.limpiar()
         self.refrescar()
         self.avisar(f"Registro {numero} marcado como libre, queda disponible para el próximo contacto.")
