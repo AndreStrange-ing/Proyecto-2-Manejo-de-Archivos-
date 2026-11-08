@@ -16,6 +16,7 @@ class BarraMenu(tk.Frame):
         self.agregar("Archivo", [("Salir", acciones["salir"])])
         self.agregar("Contactos", [("Agregar", contactos), ("Buscar", contactos),
                                    ("Modificar", contactos), ("Eliminar", contactos)])
+        self.agregar("Exportar", [("Exportar a JSON", acciones["json"])])
         self.agregar("Ayuda", [("Acerca de", acerca_de)])
         self.agregar("Settings", [("Preferencias...", acciones["settings"])])
 

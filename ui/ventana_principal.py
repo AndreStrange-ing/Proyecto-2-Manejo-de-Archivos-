@@ -2,7 +2,7 @@ import math
 import tkinter as tk
 from tkinter import font as tkfont, messagebox
 
-from contactos import archivo, indice
+from contactos import archivo, exportar
 from ui.menu import BarraMenu
 from ui.ventana_contactos import VentanaContactos
 from ui.ventana_settings import VentanaSettings
@@ -24,7 +24,7 @@ class VentanaPrincipal:
         self.fuente_titulo = tkfont.Font(root, family=familia, weight="bold")
 
         self.barra = BarraMenu(root, {"salir": root.destroy, "contactos": self.abrir_contactos,
-                                      "settings": self.abrir_settings})
+                                      "json": self.exportar_json, "settings": self.abrir_settings})
         self.barra.pack(side="top", fill="x")
 
         self.contenido = tk.Frame(root, padx=20, pady=20)
@@ -42,6 +42,14 @@ class VentanaPrincipal:
         ventana = VentanaContactos(self.root)
         self.root.wait_window(ventana)
         self.resumir()
+
+    def exportar_json(self):
+        try:
+            ruta, total = exportar.a_json()
+        except OSError as e:
+            messagebox.showerror("Exportar", f"No se pudo exportar ({e}).", parent=self.root)
+            return
+        messagebox.showinfo("Exportar", f"Se exportaron {total} contactos a:\n{ruta}", parent=self.root)
 
     def abrir_settings(self):
         VentanaSettings(self.root, self.config, self.aplicar)
