@@ -1,0 +1,6 @@
+# el .dat es de registros de tamaño fijo, si git le cambia el salto de linea
+# cada registro mediria 121 bytes y el hash dejaria de coincidir
+*.dat -text
+*.sha256 -text
+*.pdf binary
+*.zip binary
