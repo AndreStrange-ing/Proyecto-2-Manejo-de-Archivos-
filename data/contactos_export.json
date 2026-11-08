@@ -1,0 +1,46 @@
+{
+    "generado": "08/11/2026 13:29",
+    "total": 5,
+    "contactos": [
+        {
+            "id": 1,
+            "nombre": "Begoña Martínez Ñuñez",
+            "telefono": "5512-3344",
+            "correo": "begona.martinez@correo.com",
+            "ciudad": "Quetzaltenango",
+            "registro": 0
+        },
+        {
+            "id": 2,
+            "nombre": "José Muñoz Peña",
+            "telefono": "4455-6677",
+            "correo": "jose.munoz@correo.com",
+            "ciudad": "Antigua Guatemala",
+            "registro": 1
+        },
+        {
+            "id": 4,
+            "nombre": "Ñandú Ávila Gómez",
+            "telefono": "5566-7788",
+            "correo": "nandu.avila@correo.com",
+            "ciudad": "Totonicapán",
+            "registro": 3
+        },
+        {
+            "id": 5,
+            "nombre": "Carlos Alberto Ruiz",
+            "telefono": "7788-9900",
+            "correo": "carlos.ruiz@correo.com",
+            "ciudad": "Quetzaltenango",
+            "registro": 4
+        },
+        {
+            "id": 6,
+            "nombre": "María José Hernández",
+            "telefono": "2233-4455",
+            "correo": "maria.hernandez@correo.com",
+            "ciudad": "Huehuetenango",
+            "registro": 5
+        }
+    ]
+}
