@@ -1,4 +1,5 @@
 import math
+import os
 import tkinter as tk
 from tkinter import font as tkfont, messagebox
 
@@ -24,7 +25,8 @@ class VentanaPrincipal:
         self.fuente_titulo = tkfont.Font(root, family=familia, weight="bold")
 
         self.barra = BarraMenu(root, {"salir": root.destroy, "contactos": self.abrir_contactos,
-                                      "json": self.exportar_json, "settings": self.abrir_settings})
+                                      "json": self.exportar_json, "pdf": self.reporte_pdf,
+                                      "settings": self.abrir_settings})
         self.barra.pack(side="top", fill="x")
 
         self.contenido = tk.Frame(root, padx=20, pady=20)
@@ -50,6 +52,25 @@ class VentanaPrincipal:
             messagebox.showerror("Exportar", f"No se pudo exportar ({e}).", parent=self.root)
             return
         messagebox.showinfo("Exportar", f"Se exportaron {total} contactos a:\n{ruta}", parent=self.root)
+
+    def reporte_pdf(self):
+        try:
+            # el reporte sale del json, si todavia no existe se ofrece exportarlo
+            if not os.path.exists(exportar.ruta_json):
+                if not messagebox.askyesno("Reporte", "Primero hay que exportar los contactos a JSON. "
+                                           "¿Desea exportarlos ahora?", parent=self.root):
+                    return
+                exportar.a_json()
+            ruta, total = exportar.a_pdf()
+        except OSError as e:
+            messagebox.showerror("Reporte", f"No se pudo generar el reporte ({e}).", parent=self.root)
+            return
+        except ValueError:
+            messagebox.showerror("Reporte", "El JSON exportado está dañado, vuelva a exportarlo.",
+                                 parent=self.root)
+            return
+        messagebox.showinfo("Reporte", f"Reporte con {total} contactos guardado en:\n{ruta}",
+                            parent=self.root)
 
     def abrir_settings(self):
         VentanaSettings(self.root, self.config, self.aplicar)
