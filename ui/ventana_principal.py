@@ -6,6 +6,7 @@ from tkinter import font as tkfont, messagebox
 from contactos import archivo, exportar, herramientas
 from ui.menu import BarraMenu
 from ui.ventana_contactos import VentanaContactos
+from ui.ventana_info import VentanaInfo
 from ui.ventana_settings import VentanaSettings
 
 FONDOS = {"claro": "#f5f5f5", "oscuro": "#2b2b2b"}
@@ -33,6 +34,7 @@ class VentanaPrincipal:
                                       "json": self.exportar_json, "pdf": self.reporte_pdf,
                                       "integridad": self.verificar_integridad,
                                       "respaldo": self.crear_respaldo,
+                                      "info": lambda: VentanaInfo(root),
                                       "settings": self.abrir_settings})
         self.barra.pack(side="top", fill="x")
 

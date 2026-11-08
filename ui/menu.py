@@ -19,7 +19,8 @@ class BarraMenu(tk.Frame):
         self.agregar("Exportar", [("Exportar a JSON", acciones["json"]),
                                   ("Generar reporte PDF", acciones["pdf"])])
         self.agregar("Herramientas", [("Verificar integridad", acciones["integridad"]),
-                                      ("Crear respaldo ZIP", acciones["respaldo"])])
+                                      ("Crear respaldo ZIP", acciones["respaldo"]),
+                                      ("Información del archivo", acciones["info"])])
         self.agregar("Ayuda", [("Acerca de", acerca_de)])
         self.agregar("Settings", [("Preferencias...", acciones["settings"])])
 

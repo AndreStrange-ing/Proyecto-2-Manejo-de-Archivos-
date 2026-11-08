@@ -50,6 +50,15 @@ def verificar():
                         f"Huella guardada: {guardada}\nHuella actual:   {actual}")
 
 
+# tamaño, fecha de modificacion y permisos reales del archivo
+def metadatos(ruta):
+    datos = os.stat(ruta)
+    return {"tamaño": datos.st_size,
+            "modificado": datetime.fromtimestamp(datos.st_mtime).strftime("%d/%m/%Y %H:%M:%S"),
+            "lectura": os.access(ruta, os.R_OK),
+            "escritura": os.access(ruta, os.W_OK)}
+
+
 # guarda los contactos, el indice y la huella en un zip con la fecha en el nombre
 def crear_respaldo():
     incluidos = [ruta for ruta in (ruta_datos, ruta_indice, ruta_hash) if os.path.exists(ruta)]
